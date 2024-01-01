@@ -49,7 +49,7 @@ class UserView(BaseView):
     if resource:
       return self._save_resource(UserSerializer(resource,data=request.data, partial=True), request)
 
-  def register(self, request):
+  def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -96,9 +96,11 @@ class UserView(BaseView):
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
-        new_email = self.request.GET.get('new_email', None)
-        if new_email:
-          user.email = new_email
+        # import pdb;
+        # pdb.set_trace()
+        # new_email = request.GET.get('new_email', None)
+        # if new_email:
+        #   user.email = new_email
         user.save()
         account = AccountSerializer(data={'user': user.pk})  # Pass the data dictionary to the serializer
         if account.is_valid():
