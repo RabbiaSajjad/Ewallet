@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account</title>
+</head>
+<body>
+
+<h1>Edit Account</h1>
+
+{% if user %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label for="id_full_name">Full Name:</label>
+        {{ form.full_name }}
+        <br>
+
+        <label for="id_profile_picture">Profile Picture:</label>
+        {{ form.profile_picture }}
+        {% if user.profile_picture %}
+            <img src="{{ user.profile_picture.url }}" alt="Profile Image">
+        {% endif %}
+        <br>
+
+        <label for="id_contact">Contact:</label>
+        {{ form.contact }}
+        <br>
+
+        <label for="id_address">Address:</label>
+        {{ form.address }}
+        <br>
+
+        <label for="id_cnic">CNIC:</label>
+        {{ form.cnic }}
+        <br>
+
+        <label for="id_email">Email:</label>
+        {{ form.email }}
+        <br>
+
+        <!-- Add other form fields as needed -->
+
+        <input type="submit" value="Save Changes">
+    </form>
+
+    <!-- <p><a href="/">Back to User Details</a></p> -->
+
+{% else %}
+    <p>No user found</p>
+{% endif %}
+
+</body>
+</html>

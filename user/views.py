@@ -2,20 +2,19 @@ from rest_framework.response import Response
 from django.http import HttpResponseBadRequest
 from django.core.exceptions import ObjectDoesNotExist
 from inflect import engine
-from django.apps import apps
 
 from EWallet.common.base_view import BaseView
+from account.models import Account
+from account.serializers import AccountSerializer
+from user.utils.email_utils import send_email_confirmation
 
 from .models import User
 from .serializers import UserSerializer
 from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm, UserLoginForm
 from .tokens import account_activation_token
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.core.mail import EmailMessage
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 from django.contrib.auth import authenticate, login
 
 
@@ -50,27 +49,15 @@ class UserView(BaseView):
     if resource:
       return self._save_resource(UserSerializer(resource,data=request.data, partial=True), request)
 
-  def register(request):
+  def register(self, request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
             user.save()
 
+            send_email_confirmation(request, user)
              # Send email confirmation
-            current_site = get_current_site(request)
-            subject = 'Activate your account'
-            message = render_to_string('verification_instructions_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            email = EmailMessage(
-                subject, message, to=[user.email]
-            )
-            email.content_subtype = 'html'
-            email.send()
             return render(request, 'verify_email.html')
     else:
         form = UserRegistrationForm()
@@ -85,8 +72,13 @@ class UserView(BaseView):
         user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
         if user is not None:
           login(request, user)
+          account = Account.objects.get(user=user.pk)
+          context = {
+          'user': user,
+          'account': account,
+          }
                 # Redirect to the home page
-          return redirect('/user/home', user)
+          return render(request,'home_page.html', context)
     else:
         form = UserLoginForm()
 
@@ -104,7 +96,13 @@ class UserView(BaseView):
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
+        new_email = self.request.GET.get('new_email', None)
+        if new_email:
+          user.email = new_email
         user.save()
+        account = AccountSerializer(data={'user': user.pk})  # Pass the data dictionary to the serializer
+        if account.is_valid():
+          account.save()
         return redirect('account_activation_complete')
     else:
         return HttpResponseBadRequest('Activation link is invalid!')

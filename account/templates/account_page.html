@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+</head>
+<body>
+
+<h1>User Details</h1>
+
+{% if user %}
+    <h2>{{ user.full_name }}</h2>
+
+    {% if user.profile_picture %}
+        <img src="{{ user.profile_picture }}" alt="Profile Image">
+    {% endif %}
+
+    <p><strong>Contact:</strong> {{ user.contact }}</p>
+    <p><strong>Address:</strong> {{ user.address }}</p>
+    <p><strong>CNIC:</strong> {{ user.cnic }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+
+    <p class="text-center"><a href="edit">Edit personal details</a></p>
+
+{% else %}
+    <p>No user found</p>
+{% endif %}
+
+</body>
+</html>

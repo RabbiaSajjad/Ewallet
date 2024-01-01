@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'user',
+    'account',
     'rest_framework_simplejwt.token_blacklist',
     'crispy_forms',
 ]

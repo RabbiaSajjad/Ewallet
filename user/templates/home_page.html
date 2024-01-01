@@ -6,5 +6,6 @@
     {% if user.is_authenticated %}
     <p>Welcome, {{ user.username }}! You have successfully Logged in!</p>
     <p class="text-center"><a href="logout">Logout</a>.</p>
+    <p>Current balance: {{ account.current_balance }}</p>
     {% endif %}
 {% endblock %}
