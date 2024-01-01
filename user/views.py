@@ -10,7 +10,6 @@ from .models import User
 from .serializers import UserSerializer
 from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm, UserLoginForm
-from django.contrib.auth.forms import AuthenticationForm
 from .tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -81,15 +80,13 @@ class UserView(BaseView):
   def login_user(request):
     if request.method == 'POST':
       form = UserLoginForm(request, data=request.POST)
-      import pdb;
-      pdb.set_trace()
       if form.is_valid():
             # Authenticate the user
         user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
         if user is not None:
           login(request, user)
                 # Redirect to the home page
-          return render(request, 'home_page.html', {'user': user})
+          return redirect('/user/home', user)
     else:
         form = UserLoginForm()
 
@@ -114,3 +111,10 @@ class UserView(BaseView):
 
   def account_activation_complete(request):
     return render(request, 'verification_complete.html')
+
+  def logout(request):
+    request.session.flush()
+    return redirect('/user/login')
+
+  def home(request):
+    return render(request, 'home_page.html')
