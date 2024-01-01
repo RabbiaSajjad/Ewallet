@@ -1,6 +1,9 @@
+import json
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from requests import Response
 from account.forms import EditAccountForm
+from account.models import Account
 from account.serializers import AccountSerializer
 from django.contrib.auth.decorators import login_required
 
@@ -46,3 +49,5 @@ class AccountView(BaseView):
             'email': user.email,
         })
     return render(request, 'edit_account_page.html', {'user': user, 'form': form})
+
+

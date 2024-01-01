@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'user',
     'account',
+    'beneficiary',
     'rest_framework_simplejwt.token_blacklist',
     'crispy_forms',
 ]
