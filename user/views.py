@@ -9,7 +9,7 @@ from EWallet.common.base_view import BaseView
 from .models import User
 from .serializers import UserSerializer
 from django.shortcuts import render, redirect
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, UserLoginForm
 from django.contrib.auth.forms import AuthenticationForm
 from .tokens import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
@@ -17,6 +17,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
+from django.contrib.auth import authenticate, login
 
 
 class UserView(BaseView):
@@ -77,14 +78,20 @@ class UserView(BaseView):
 
     return render(request, 'register.html', {'form': form})
 
-  def login(request):
+  def login_user(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # return redirect('login_page')
+      form = UserLoginForm(request, data=request.POST)
+      import pdb;
+      pdb.set_trace()
+      if form.is_valid():
+            # Authenticate the user
+        user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+        if user is not None:
+          login(request, user)
+                # Redirect to the home page
+          return render(request, 'home_page.html', {'user': user})
     else:
-        form = AuthenticationForm()
+        form = UserLoginForm()
 
     return render(request, 'login.html', {'form': form})
 

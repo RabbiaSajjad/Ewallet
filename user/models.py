@@ -5,6 +5,25 @@ from django.core.mail import send_mail
 
 from EWallet.settings import DEFAULT_FROM_EMAIL
 
+from django.contrib.auth.models import BaseUserManager
+
+class CustomUserManager(BaseUserManager):
+  def create_user(self, email, password=None, **extra_fields):
+    if not email:
+        raise ValueError('The Email field must be set')
+    email = self.normalize_email(email)
+    user = self.model(email=email, **extra_fields)
+    user.set_password(password)
+    user.save(using=self._db)
+    return user
+
+  def create_superuser(self, email, password=None, **extra_fields):
+    extra_fields.setdefault('is_staff', True)
+    extra_fields.setdefault('is_superuser', True)
+
+    return self.create_user(email, password, **extra_fields)
+
+
 class User(AbstractBaseUser):
   email = models.EmailField(verbose_name= "email", max_length=60, unique=True)
   username = models.CharField(max_length=30, unique=True)
@@ -16,6 +35,8 @@ class User(AbstractBaseUser):
   contact = models.CharField(max_length=20, unique=True)
   is_admin = models.BooleanField(default=False)
   is_active = models.BooleanField(default=False) #If user has activated his account by following the confirmation email
+
+  objects = CustomUserManager()
 
   USERNAME_FIELD = 'username'
 
