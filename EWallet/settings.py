@@ -50,8 +50,15 @@ INSTALLED_APPS = [
     'user',
     'account',
     'beneficiary',
+    'transaction',
     'rest_framework_simplejwt.token_blacklist',
     'crispy_forms',
+    'crispy_bootstrap4',
+    'axes',
+]
+
+AUTHENTICATION_BACKENDS = [
+   'axes.backends.AxesBackend', # Axes must be first
 ]
 
 EMAIL_BACKEND = env('EMAIL_BACKEND')
@@ -77,6 +84,7 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'axes.middleware.AxesMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -151,6 +159,17 @@ USE_I18N = True
 
 USE_TZ = True
 
+AXES_FAILURE_LIMIT= 5
+AXES_RESET_ON_SUCCESS = True
+
+
+LOGIN_REDIRECT_URL='/account'
+LOGIN_URL='login'
+
+# settings.py
+
+MEDIA_URL = ''
+MEDIA_ROOT = BASE_DIR / 'image'  # Use the correct path to your media directory
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

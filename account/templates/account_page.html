@@ -4,28 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    {% load crispy_forms_tags %}
 </head>
 <body>
 
-<h1>User Details</h1>
+<div class="container">
+    <h1 class="text-center">User Details</h1>
 
-{% if user %}
-    <h2>{{ user.full_name }}</h2>
+    {% if user %}
+        <div class="user-info mx-auto">
+            <h2 class="text-center">{{ user.full_name }}</h2>
 
-    {% if user.profile_picture %}
-        <img src="{{ user.profile_picture }}" alt="Profile Image">
+            {% load static %}
+            {% if user.profile_picture %}
+                <p>{{ user.profile_picture }}</p>
+                <img src="{% static {{user.user_profile}} %}" alt="Profile Image" class="img-fluid rounded">
+            {% endif %}
+
+            <p><strong>Contact:</strong> {{ user.contact }}</p>
+            <p><strong>Address:</strong> {{ user.address }}</p>
+            <p><strong>CNIC:</strong> {{ user.cnic }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+
+            <p class="text-center"><a href="edit" class="btn btn-primary">Edit Personal Details</a></p>
+        </div>
+    {% else %}
+        <p class="text-center">No user found</p>
     {% endif %}
+</div>
 
-    <p><strong>Contact:</strong> {{ user.contact }}</p>
-    <p><strong>Address:</strong> {{ user.address }}</p>
-    <p><strong>CNIC:</strong> {{ user.cnic }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-
-    <p class="text-center"><a href="edit">Edit personal details</a></p>
-
-{% else %}
-    <p>No user found</p>
-{% endif %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>

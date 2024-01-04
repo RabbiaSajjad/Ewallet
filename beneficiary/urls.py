@@ -5,5 +5,5 @@ from beneficiary.views import BeneficiaryView
 
 
 urlpatterns = [
-  path('add', BeneficiaryView.add_beneficiary),
+  path('add', BeneficiaryView.as_view()),
 ]

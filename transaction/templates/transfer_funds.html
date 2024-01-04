@@ -1,0 +1,40 @@
+<!-- transfer_funds_form.html -->
+
+<form method="post">
+  {% csrf_token %}
+
+  <!-- Payee -->
+  <div>
+    <label for="id_payee">Payee:</label>
+    <input type="email" id="id_payee" name="payee" required>
+  </div>
+
+  <!-- Transfer Amount -->
+  <div>
+    <label for="id_transfer_amount">Transfer Amount:</label>
+    <input type="number" id="id_transfer_amount" name="transfer_amount" required>
+  </div>
+
+  <!-- Purpose of Transfer -->
+  <div>
+    <label for="id_purpose_of_transfer">Purpose of Transfer:</label>
+    <textarea id="id_purpose_of_transfer" name="purpose_of_transfer" rows="4" required></textarea>
+  </div>
+
+  <!-- Submit Button -->
+  <div>
+    <button type="submit">Transfer Funds</button>
+  </div>
+</form>
+
+<script>
+  const toastElement = document.getElementById("toast")
+  const toastBody = document.getElementById("toast-body")
+
+  const toast = new bootstrap.Toast(toastElement, { delay: 2000 })
+
+  htmx.on("showMessage", (e) => {
+      toastBody.innerText = e.detail.value
+      toast.show()
+  })
+</script>

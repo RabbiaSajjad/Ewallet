@@ -3,9 +3,33 @@
 {% block title %}Activation Email Sent{% endblock %}
 
 {% block content %}
+  <div class="container mt-5">
     {% if user.is_authenticated %}
-    <p>Welcome, {{ user.username }}! You have successfully Logged in!</p>
-    <p class="text-center"><a href="logout">Logout</a>.</p>
-    <p>Current balance: {{ account.current_balance }}</p>
+      <div class="alert alert-success" role="alert">
+        Welcome, {{ user.username }}! You have successfully logged in!
+      </div>
+
+      <p class="text-left">
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+      </p>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">Account Information</h5>
+          <p class="card-text">
+            <strong>Current balance:</strong>
+            <span id="balanceValue">{{ account.current_balance }}</span>
+            <button id="toggleBalance" class="btn btn-link">👁️‍🗨️</button>
+          </p>
+        </div>
+      </div>
     {% endif %}
+  </div>
+
+  <script>
+    document.getElementById('toggleBalance').addEventListener('click', function() {
+      var balanceValue = document.getElementById('balanceValue');
+      balanceValue.classList.toggle('d-none');
+    });
+  </script>
 {% endblock %}

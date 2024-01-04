@@ -4,6 +4,7 @@ from rest_framework import status
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.pagination import LimitOffsetPagination
+from django.contrib.auth.mixins import LoginRequiredMixin
 from inflect import engine
 import re as regex
 from django.apps import apps

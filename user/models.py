@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 
@@ -17,14 +17,15 @@ class CustomUserManager(BaseUserManager):
     user.save(using=self._db)
     return user
 
-  def create_superuser(self, email, password=None, **extra_fields):
-    extra_fields.setdefault('is_staff', True)
-    extra_fields.setdefault('is_superuser', True)
+  def create_superuser(self, username, password=None, is_staff=True):
+    user = self.model(username=username, is_staff=True)
+    user.is_superuser = True
+    user.set_password(password)
+    user.save(using=self._db)
+    return user
 
-    return self.create_user(email, password, **extra_fields)
 
-
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
   email = models.EmailField(verbose_name= "email", max_length=60, unique=True)
   username = models.CharField(max_length=30, unique=True)
   last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
@@ -33,7 +34,7 @@ class User(AbstractBaseUser):
   cnic = models.CharField(max_length=15, unique=True)
   address = models.CharField(max_length=100)
   contact = models.CharField(max_length=20, unique=True)
-  is_admin = models.BooleanField(default=False)
+  is_staff = models.BooleanField(default=False)
   is_active = models.BooleanField(default=False) #If user has activated his account by following the confirmation email
 
   objects = CustomUserManager()
@@ -46,3 +47,9 @@ class User(AbstractBaseUser):
             'refresh':str(refresh),
             'access':str(refresh.access_token)
         }
+
+  def has_perm(self, perm, obj=None):
+    return self.is_staff
+
+  def has_module_perms(self, app_label):
+    return self.is_staff

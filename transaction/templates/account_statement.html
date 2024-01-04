@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer History</title>
+</head>
+<body>
+
+<h1>Transfer History</h1>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Timestamp</th>
+            <th>Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transfer in sent_transfers %}
+            <tr style="color: red;">
+                <td>{{ transfer.transfer_amount }}</td>
+                <td>{{ transfer.timestamp }}</td>
+                <td>{{ transfer.purpose_of_transfer }}</td>
+            </tr>
+        {% endfor %}
+
+        {% for transfer in received_transfers %}
+            <tr style="color: green;">
+                <td>{{ transfer.transfer_amount }}</td>
+                <td>{{ transfer.timestamp }}</td>
+                <td>{{ transfer.purpose_of_transfer }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

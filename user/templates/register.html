@@ -1,13 +1,61 @@
-<!-- your_app/templates/registration/register.html -->
 {% extends 'base.html' %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
-  <h2>Register</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit">Register</button>
-  </form>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h2 class="mb-4 text-center">Register</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="row">
+            <div class="col-md-4">
+              {{ form.full_name|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+              {{ form.email|as_crispy_field }}
+            </div>
+            <div class="col-md-4">
+              {{ form.username|as_crispy_field }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              {{ form.password1|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+              {{ form.password2|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              {{ form.cnic|as_crispy_field }}
+            </div>
+            <div class="col-md-6">
+              {{ form.contact|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              {{ form.address|as_crispy_field }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              {{ form.profile_picture|as_crispy_field }}
+            </div>
+          </div>
+
+          <!-- Add more fields as needed -->
+
+          <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Register</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 {% endblock %}
