@@ -59,6 +59,7 @@ INSTALLED_APPS = [
 
 AUTHENTICATION_BACKENDS = [
    'axes.backends.AxesBackend', # Axes must be first
+   'django.contrib.auth.backends.ModelBackend'
 ]
 
 EMAIL_BACKEND = env('EMAIL_BACKEND')
@@ -161,10 +162,12 @@ USE_TZ = True
 
 AXES_FAILURE_LIMIT= 5
 AXES_RESET_ON_SUCCESS = True
+AXES_COOLOFF_TIME = 0.25
 
 
 LOGIN_REDIRECT_URL='/account'
 LOGIN_URL='login'
+
 
 # settings.py
 

@@ -67,6 +67,8 @@ class UserView(BaseView):
   def login_user(request):
     if request.method == 'POST':
       form = UserLoginForm(request, data=request.POST)
+      import pdb;
+      pdb.set_trace()
       if form.is_valid():
             # Authenticate the user
         user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])

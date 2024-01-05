@@ -1,29 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.core.mail import send_mail
-
-from EWallet.settings import DEFAULT_FROM_EMAIL
-
-from django.contrib.auth.models import BaseUserManager
-
-class CustomUserManager(BaseUserManager):
-  def create_user(self, email, password=None, **extra_fields):
-    if not email:
-        raise ValueError('The Email field must be set')
-    email = self.normalize_email(email)
-    user = self.model(email=email, **extra_fields)
-    user.set_password(password)
-    user.save(using=self._db)
-    return user
-
-  def create_superuser(self, username, password=None, is_staff=True):
-    user = self.model(username=username, is_staff=True)
-    user.is_superuser = True
-    user.set_password(password)
-    user.save(using=self._db)
-    return user
-
+from django.contrib.auth.models import UserManager
 
 class User(AbstractBaseUser, PermissionsMixin):
   email = models.EmailField(verbose_name= "email", max_length=60, unique=True)
@@ -37,7 +15,7 @@ class User(AbstractBaseUser, PermissionsMixin):
   is_staff = models.BooleanField(default=False)
   is_active = models.BooleanField(default=False) #If user has activated his account by following the confirmation email
 
-  objects = CustomUserManager()
+  objects = UserManager()
 
   USERNAME_FIELD = 'username'
 
