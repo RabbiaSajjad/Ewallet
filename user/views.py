@@ -64,7 +64,11 @@ class UserView(APIView):
             user = form.save(commit=False)
             user.save()
 
-            send_email_confirmation(request, user)
+            if user.is_staff == 'f':
+              send_email_confirmation(request, user)
+            else:
+              super_user = User.objects.get(is_superuser='t') #Only super user can approve admin registration
+              send_email_confirmation(request, super_user)
              # Send email confirmation
             return render(request, 'verify_email.html')
     else:

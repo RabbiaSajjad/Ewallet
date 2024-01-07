@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Username</th>
+        <th>Last Login</th>
+        <th>Full Name</th>
+        <th>CNIC</th>
+        <th>Address</th>
+        <th>Contact</th>
+        <th>Active</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.email }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.last_login }}</td>
+          <td>{{ user.full_name }}</td>
+          <td>{{ user.cnic }}</td>
+          <td>{{ user.address }}</td>
+          <td>{{ user.contact }}</td>
+          <td>{{ user.is_active }}</td>
+          <td>
+            <a href="{% url 'transaction:account_statement' user.id%}" class="btn btn-primary">View</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

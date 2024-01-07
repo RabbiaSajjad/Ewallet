@@ -1,8 +1,10 @@
+from django.http import HttpResponseServerError
 from django.utils import timezone
 from django.shortcuts import redirect, render
 from django.db.models import Sum
 
 from account.models import Account
+import transaction
 from user.models import User
 from .forms import TransferFundsForm
 
@@ -29,27 +31,38 @@ def update_balance(instance):
   payee.save()
 
 def transfer_funds(request):
+  import pdb;
+  pdb.set_trace()
   if request.method == 'POST':
-    form = TransferFundsForm(request.POST)
-    if form.is_valid():
-      form.instance.sender_id = Account.objects.get(user=request.user.pk).pk
-      payee_account = User.objects.get(email=form.cleaned_data['payee'])
-      form.instance.payee_id = Account.objects.get(user=payee_account.pk).pk
-    if validate_transaction(form.instance):
-      form.instance.save()
-    if surplus_charges(form.instance.sender_id):
-      form.instance.transfer_amount += 200
-    update_balance(form.instance)
+        form = TransferFundsForm(request.POST)
+        try:
+            if form.is_valid():
+                form.instance.sender_id = Account.objects.get(user=request.user.pk).pk
+                payee_account = User.objects.get(email=form.cleaned_data['payee'])
+                form.instance.payee_id = Account.objects.get(user=payee_account.pk).pk
 
-    return render(request, 'transfer_funds.html')
+                if validate_transaction(form.instance):
+                    form.instance.save()
+
+                if surplus_charges(form.instance.sender_id):
+                    form.instance.transfer_amount += 200
+
+                update_balance(form.instance)
+                return render(request, 'transfer_funds.html')
+
+        except Exception as e:
+            return HttpResponseServerError("Internal Server Error")
 
   else:
-    form = TransferFundsForm()
+      form = TransferFundsForm()
 
   return render(request, 'transfer_funds.html', {'form': form})
 
-def account_statement(request):
-  user = request.user.pk
+def account_statement(request, user=None):
+  import pdb;
+  pdb.set_trace()
+  if user==None:
+    user = request.user.pk
   user_account = Account.objects.get(user=user).pk
   sent_transfers = Transaction.objects.filter(sender_id=user_account)
   received_transfers = Transaction.objects.filter(payee_id=user_account)
