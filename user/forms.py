@@ -8,10 +8,10 @@ User = get_user_model()
 class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['email', 'username', 'password1', 'password2', 'full_name', 'cnic', 'address', 'contact', 'profile_picture']
+        fields = ['email', 'username', 'password1', 'password2', 'full_name', 'cnic', 'address', 'contact', 'profile_picture', 'is_staff']
 
 class UserLoginForm(AuthenticationForm):
     class Meta:
         model = User
-        fields = ['username', 'password', 'tokens']
+        fields = ['username', 'password', 'tokens', 'is_staff']
 
