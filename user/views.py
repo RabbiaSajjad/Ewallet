@@ -9,16 +9,24 @@ from account.serializers import AccountSerializer
 from user.utils.email_utils import send_email_confirmation
 
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserLoginSerializer, UserSerializer
 from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm, UserLoginForm
 from .tokens import account_activation_token
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.contrib.auth import authenticate, login
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
-class UserView(BaseView):
+
+class UserView(APIView):
+  authentication_classes = [JWTAuthentication]
+
   def get(self, request, id=None):
     if id:
       resource=self._find_resource(id)
@@ -66,23 +74,21 @@ class UserView(BaseView):
 
   def login_user(request):
     if request.method == 'POST':
-      form = UserLoginForm(request, data=request.POST)
-      import pdb;
-      pdb.set_trace()
-      if form.is_valid():
-            # Authenticate the user
-        user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-        if user is not None:
-          login(request, user)
+      form = UserLoginSerializer(request, data=request.POST)
+      user=form.validate(request) #Authenticate the user
+      if user is not None:
+        try:
           account = Account.objects.get(user=user.pk)
           context = {
           'user': user,
-          'account': account,
+          'account': account
           }
-                # Redirect to the home page
+          # Redirect to the home page
           return render(request,'home_page.html', context)
+        except Account.DoesNotExist:
+          return render(request, 'user_not_found.html')
     else:
-        form = UserLoginForm()
+      form = UserLoginForm()
 
     return render(request, 'login.html', {'form': form})
 
@@ -97,12 +103,9 @@ class UserView(BaseView):
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
+        import pdb;
+        pdb.set_trace()
         user.is_active = True
-        # import pdb;
-        # pdb.set_trace()
-        # new_email = request.GET.get('new_email', None)
-        # if new_email:
-        #   user.email = new_email
         user.save()
         account = AccountSerializer(data={'user': user.pk})  # Pass the data dictionary to the serializer
         if account.is_valid():
@@ -118,5 +121,9 @@ class UserView(BaseView):
     request.session.flush()
     return redirect('/user/login')
 
-  def home(request):
-    return render(request, 'home_page.html')
+  def home(request,context):
+    return render(request, 'home_page.html', context)
+
+def update_email(user, updated_email):
+  user.email = updated_email
+    # user.save()

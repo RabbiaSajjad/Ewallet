@@ -14,6 +14,6 @@ urlpatterns = [
       path('verify-email', UserView.verify_email),
       path('activate/<str:uidb64>/<token>/', UserView.activate, name='activate'),
       path('account_activation_complete/', UserView.account_activation_complete, name='account_activation_complete'),
-      path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+      path('api/token', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
       path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]

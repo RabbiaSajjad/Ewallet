@@ -19,7 +19,6 @@
             {% load static %}
             {% if user.profile_picture %}
                 <p>{{ user.profile_picture }}</p>
-                <img src="{% static {{user.user_profile}} %}" alt="Profile Image" class="img-fluid rounded">
             {% endif %}
 
             <p><strong>Contact:</strong> {{ user.contact }}</p>

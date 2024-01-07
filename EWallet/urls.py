@@ -26,6 +26,3 @@ urlpatterns = [
     path('beneficiary/', include('beneficiary.urls')),
     path('transaction/', include('transaction.urls')),
 ]
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
